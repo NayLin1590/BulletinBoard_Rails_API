@@ -3,7 +3,7 @@ class CreateUsers < ActiveRecord::Migration[6.1]
     create_table :users do |t|
       t.string :name, varchar: 255, null: false
       t.string :email, varchar: 255, null: false
-      t.string :password_digest, varchar: 255, null: false
+      t.string :password_digest
       t.string :profile , varchar: 255, null: false
       t.integer :type ,:limit=>1, null: false
       t.string :phone, varchar: 20
