@@ -4,7 +4,6 @@ class UsersController < ApplicationController
   def index
     @users = User.where(deleted_user_id: nil)
     @userInfo = []
-    # @users[0].create_user_id = "hell"
     @users.each do |user|
       # profile image 
       if(user.profile)
@@ -23,10 +22,10 @@ class UsersController < ApplicationController
     end
     render json: @userInfo
   end
+
   #VALIDATE 
   def validate
     @user = User.new(user_params)
-    # render json: @user
     if !@user.valid?        
       render json: @user.errors , status: 400
     else 
@@ -50,7 +49,7 @@ class UsersController < ApplicationController
     end
   end
 
-  #detail
+  #DETAILS
   def details
     user = User.find(params[:id])
     if(user.profile)
@@ -63,6 +62,7 @@ class UsersController < ApplicationController
     render json: user
   end
 
+  #UPDATE for Soft delete and edit function 
   def update
     @user = User.find_by(id: params[:id])
     aa = @user.update(user_params)

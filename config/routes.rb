@@ -9,8 +9,12 @@ Rails.application.routes.draw do
   patch  "api/user/remove", to:"users#update"
   # post
   get "api/post", to: "posts#index"
+  post "api/post/details", to: "posts#details"
+  post "api/post/validateCreate", to: "posts#validateCreate"
+  post "api/post/validateEdit", to: "posts#validateEdit"
+  patch "api/post/update", to: "posts#update"
   post "api/post/create", to: "posts#create"
-  get "api/post/details", to: "posts#details"
+  patch  "api/post/remove", to:"posts#remove"
   # test
   post "/test" , to: "users#testinsert"
   patch "/test/update", to: "users#testupdate"
