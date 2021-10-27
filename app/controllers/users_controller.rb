@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   before_action :authorized, only: [:auto_login , :create, :validate , :index]
 
   def index
-    @users = User.where(deleted_user_id: nil)
+    @users = User.where(deleted_user_id: 0)
     @userInfo = []
     @users.each do |user|
       # profile image 
@@ -52,24 +52,65 @@ class UsersController < ApplicationController
   #DETAILS
   def details
     user = User.find(params[:id])
+    @profileImg = ""
     if(user.profile)
       filename = user.profile
       path = "app/assets/images/"+filename
       data = File.open(path, 'rb') {|file| file.read }
       imgfile = "data:image;base64,#{Base64.encode64(data)}"
-      user.profile = imgfile
+      @profileImg = imgfile
     end
-    render json: user
+    render json: {user: user, profileImg: @profileImg}
   end
 
-  #UPDATE for Soft delete and edit function 
-  def update
+  #UPDATE for Soft delete  function 
+  def remove
     @user = User.find_by(id: params[:id])
     aa = @user.update(user_params)
     if(aa)
       render json: {"response":"ok"} 
     else
       render json: {"response":"update fail"}, status: :unprocessable_entity
+    end
+  end
+
+  #update user Data(profile edit function)
+  def editUser
+    if(params[:image])
+      imgname = params[:image].original_filename
+      username = params[:name]
+      path = File.join("app", "assets" , "images" ,(username+imgname))
+      File.open(path, "wb") { |f| f.write(params[:image].read) }
+    end
+    @user = User.find_by(id: params[:id])
+    # aa = @user.update(user_params)
+    if(@user.update(user_params))
+      render json: {"response":"ok"} 
+    else
+      render json: {"response":"update fail"}, status: :unprocessable_entity
+    end
+  end
+
+  def changePassword
+    @user = User.find_by(id: params[:id])
+    if (@user && @user.authenticate(params[:currentpassword]))
+      @user.password = params[:newpassword]
+      if @user.update(password: @user.password)
+        render json: {response:"ok"}
+      end
+    else
+      render json: {error: "Current Password is wrong!"} , status: 401
+    end
+  end
+
+  def resetPassword 
+    # @user = User.find_by(email: params[:email])
+    @user = "testerrails.02@gmail.com"
+    if @user
+      UserMailer.password_reset_email(@user).deliver_now
+      render json: @user, status: :created, location: @user
+    else
+      render json: {error: "error"}
     end
   end
 
@@ -90,8 +131,11 @@ class UsersController < ApplicationController
   end
 
   private
-  
     def user_params
       params.permit(:name, :email, :password, :profile , :role, :phone, :address, :dob, :create_user_id, :updated_user_id, :deleted_user_id,:deleted_at)
     end 
 end
+
+
+
+

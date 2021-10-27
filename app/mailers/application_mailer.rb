@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: 'from@example.com'
-  layout 'mailer'
+  default from: 'testerrails01@gmail.com'
+  layout 'password_reset_email'
 end
