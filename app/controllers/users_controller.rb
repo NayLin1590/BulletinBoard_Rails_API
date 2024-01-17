@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     @users.each do |user|
       # profile image 
       if(user.profile)
-        filename = user.profile
+        filename = user.profile test test tuets
         path = "app/assets/images/"+filename
         data = File.open(path, 'rb') {|file| file.read }
         imgfile = "data:image;base64,#{Base64.encode64(data)}"
