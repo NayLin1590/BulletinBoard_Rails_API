@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   before_action :authorized, only: [:auto_login , :create, :validate , :index]
 
-  #  hello world test
   def index
     @users = User.where(deleted_user_id: 0)
     @userInfo = []
